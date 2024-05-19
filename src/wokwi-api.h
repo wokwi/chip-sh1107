@@ -53,10 +53,17 @@ extern __attribute__((import_name("pinMode"))) void pin_mode(pin_t pin, uint32_t
 extern __attribute__((import_name("pinADCRead"))) float pin_adc_read(pin_t pin);
 extern __attribute__((import_name("pinDACWrite"))) float pin_dac_write(pin_t pin, float voltage);
 
+typedef uint32_t string_t;
+#define STRING_NULL 0
+
+extern __attribute__((import_name("stringGetLength"))) uint32_t string_get_length(string_t string);
+extern __attribute__((import_name("stringRead"))) uint32_t string_read(string_t string, char *buf, uint32_t buffer_size);
+
 extern __attribute__((import_name("attrInit"))) uint32_t attr_init(const char *name, uint32_t default_value);
-extern __attribute__((import_name("attrInit"))) uint32_t attr_init_float(const char *name, float default_value);
+extern __attribute__((import_name("attrInitFloat"))) uint32_t attr_init_float(const char *name, float default_value);
 extern __attribute__((import_name("attrRead"))) uint32_t attr_read(uint32_t attr_id);
 extern __attribute__((import_name("attrReadFloat"))) float attr_read_float(uint32_t attr_id);
+extern __attribute__((import_name("attrStringInit"))) string_t attr_string_init(const char *name);
 
 typedef struct {
   void *user_data;
@@ -128,8 +135,25 @@ static uint64_t get_sim_nanos(void) {
 
 typedef uint32_t buffer_t;
 extern __attribute__((import_name("framebufferInit"))) buffer_t framebuffer_init(uint32_t *pixel_width, uint32_t *pixel_height);
-extern __attribute__((import_name("bufferRead"))) void buffer_read(buffer_t buffer, uint32_t offset, uint8_t *data, uint32_t data_len);
-extern __attribute__((import_name("bufferWrite"))) void buffer_write(buffer_t buffer, uint32_t offset, uint8_t *data, uint32_t data_len);
+extern __attribute__((import_name("bufferRead"))) void buffer_read(buffer_t buffer, uint32_t offset, void *data, uint32_t data_len);
+extern __attribute__((import_name("bufferWrite"))) void buffer_write(buffer_t buffer, uint32_t offset, void *data, uint32_t data_len);
+
+// Experimental API - subject to change
+extern __attribute__((import_name("_symbolResolve"))) void* _symbol_resolve(char *symbol_name);
+extern __attribute__((import_name("_mcuReadMemory"))) bool _mcu_read_memory(const void *address, void *target, uint32_t size);
+extern __attribute__((import_name("_mcuReadUint32"))) uint32_t _mcu_read_uint32(const void *address);
+extern __attribute__((import_name("_mcuReadUint32"))) void* _mcu_read_ptr(const void *address);
+extern __attribute__((import_name("_mcuReadPC"))) uint32_t _mcu_read_pc();
+extern __attribute__((import_name("_mcuReadSP"))) uint32_t _mcu_read_sp();
+
+typedef struct {
+  void *user_data;
+  void (*callback)(void *user_data, uint32_t core, uint32_t sp);
+  uint32_t sp_min;
+  uint32_t sp_max;
+  uint32_t reserved[8];
+} sp_monitor_config_t;
+extern __attribute__((import_name("_mcuMonitorSP"))) uint32_t _mcu_monitor_sp(const sp_monitor_config_t *config);
 
 #ifdef __cplusplus
 }

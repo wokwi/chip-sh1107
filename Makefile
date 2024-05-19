@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2022 Uri Shaked <uri@wokwi.com>
+# SPDX-FileCopyrightText: © 2024 Uri Shaked <uri@wokwi.com>
 # SPDX-License-Identifier: MIT
 
 SOURCES = src/main.c
